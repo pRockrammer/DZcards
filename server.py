@@ -31,7 +31,7 @@ class Game:
                 self.start()
             elif ans == 'q':
                 print('By!')
-                self.f = open('file.txt', 'a')
+                self.f = open('file.txt', 'w')
                 for log, mon in self.logins.items():
                     self.f.write(log + '.' + str(mon) + '\n')
                 self.f.close()
