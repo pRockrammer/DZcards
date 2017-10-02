@@ -6,6 +6,7 @@ class Game:
     def __init__(self):
         self.d = diler.Diler(self)
         self.logins = {}
+        self.money = 10000;
         self.clients = [] #[(conn, addr)]
         self.server = network.Server()
         try:
@@ -13,6 +14,7 @@ class Game:
         except IOError as e:
             print('Файла с логинами не существует!')
         self.main()
+        self.f.writelines(self.logins)
 
 
     def main(self):
@@ -47,13 +49,14 @@ class Game:
             self.fromFiletoDict(self.f)
             if not(s in self.logins.keys()):
                 self.send(self.clients[-1][0], 'Добро пожаловать, новый игрок')
-                self.logins[s] = 10000 #10000 - изначальное кол-во денег
+                self.logins[s] = self.money #10000 - изначальное кол-во денег
             else:
-                self.send(self.clients[-1][0], 'Добро пожаловать ' + s)
+                self.money = int(self.clients[-1][0])
+                self.send(self.money, 'Добро пожаловать ' + s)
         except FileNotFoundError as e:
             if not(s in self.logins):
                 self.send(self.clients[-1][0], 'Добро пожаловать, новый игрок')
-                self.logins[s] = 10000 #10000 - изначальное кол-во денег
+                self.logins[s] = self.money #10000 - изначальное кол-во денег
 
         self.send(self.clients[-1][0], str(self.logins[s]))
         self.recv(self.clients[-1][0])
@@ -74,7 +77,6 @@ class Game:
         self.broadcast(self.d.river())
         self.broadcast(self.d.opening())
         self.broadcast("Спасибо за игру!")
-        self.f.writelines(self.logins)
 
     def broadcast(self, msg):
         for client in self.clients:
